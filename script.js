@@ -14,8 +14,10 @@ const saveModalBtn = document.getElementById('saveButton');
 const cancelModalBtn = document.getElementById('cancelButton');
 const deleteModalBtn = document.getElementById('deleteButton');
 const weekdaysEle = document.getElementById('weekdays');
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const monthDropdownContainerEle = document.getElementById('monthDropdown');
+const monthNames = ['Jan', 'Feb', 'Mar', 'Ap', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 
 function openModal(dateString, newEvent=true, uniqueId = null) {
   const [year, month, day] = dateString.split('-').map(Number);
@@ -76,7 +78,10 @@ function loadYearView() {
 
   for(let i=1;i<=12;i++)  {
     const monthSquare = document.createElement('div');
-    monthSquare.textContent = monthNames[i-1];
+    const spanEle = document.createElement('span');
+    spanEle.classList.add('month-number');
+    spanEle.textContent = monthNames[i-1];
+    monthSquare.appendChild(spanEle);
     const dateString = `${year}-${String(i).padStart(2, '0')}`;
     const eventForMonth = events.filter(e => e.date.includes(dateString));
     if (eventForMonth.length > 0) {
@@ -99,10 +104,13 @@ function loadYearView() {
 
 function loadMonthView() {
   const dt = new Date();
-  const day = dt.getDate();
-  const month = dt.getMonth();
-  const year = dt.getFullYear();
-
+  let month = 0;
+  try {
+    month = Number(monthSelect.value) ?? dt.getMonth();
+  } catch(e) {
+    month = dt.getMonth();
+  }
+  let year = Number(yearSelect.value) || dt.getFullYear();
   const firstDayOfMonth = new Date(year, month, 1);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const dateString = firstDayOfMonth.toLocaleDateString('en-us', {
@@ -112,34 +120,37 @@ function loadMonthView() {
     day: 'numeric',
   });
   const paddingDays = weekdays.indexOf(dateString.split(', ')[0]);
-
-  document.getElementById('monthDisplay').innerText = 
-    `${dt.toLocaleDateString('en-us', { month: 'long' })} ${year}`;
-
   calendarMonth.innerHTML = '';
-
   for(let i = 1; i <= paddingDays + daysInMonth; i++) {
     const daySquare = document.createElement('div');
     daySquare.classList.add('day');
 
-    const dayString = `${month + 1}/${i - paddingDays}/${year}`;
-
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
-      const eventForDay = events.find(e => e.date === dayString);
-
-      if (i - paddingDays === day && nav === 0) {
+      const dayString = formatDate(new Date(year, month, i- paddingDays));
+      const eventForDay = events.filter(e => e.date.includes(dayString));
+      const todayDate = new Date();
+      const todayYear = todayDate.getFullYear();
+      const todayMonth = todayDate.getMonth();
+      const todayDay = todayDate.getDate();
+      if(year === todayYear && month === todayMonth && i - paddingDays === todayDay) {
         daySquare.id = 'currentDay';
       }
 
-      if (eventForDay) {
-        const eventDiv = document.createElement('div');
-        eventDiv.classList.add('event');
-        eventDiv.innerText = eventForDay.title;
-        daySquare.appendChild(eventDiv);
+      if (eventForDay.length > 0) {
+        eventForDay.forEach(event => {
+          const eventDiv = document.createElement('div');
+          eventDiv.classList.add('event');
+          eventDiv.innerText = event.title;
+          eventDiv.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openModal(event.date, false, event.id);
+          });
+          daySquare.appendChild(eventDiv);
+        });
       }
 
-      daySquare.addEventListener('click', () => openModal(dayString));
+      daySquare.addEventListener('click', () => openModal(dayString, true));
     } else {
       daySquare.classList.add('padding');
     }
@@ -159,7 +170,7 @@ function closeModal() {
     loadYearView();
   }
   else {
-    // Load month view logic here
+    loadMonthView();
   }
 }
 
@@ -195,7 +206,8 @@ function toggleSaveBtn() {
 }
 
 function showYearView() {
-  calendarYear.style.display = 'block';
+  monthDropdownContainerEle.style.display = 'none';
+  calendarYear.style.display = 'flex';
   calendarMonth.style.display = 'none';
   monthViewBtn.classList.remove('btn-active');
   yearViewBtn.classList.add('btn-active');
@@ -205,18 +217,24 @@ function showYearView() {
 }
 
 function showMonthView() {
+  monthDropdownContainerEle.style.display = 'block';
   calendarYear.style.display = 'none';
-  calendarMonth.style.display = 'block';
+  calendarMonth.style.display = 'grid';
   monthViewBtn.classList.add('btn-active');
   yearViewBtn.classList.remove('btn-active');
-  weekdaysEle.style.display = 'block';
-  // Load month view logic here if needed
+  weekdaysEle.style.display = 'grid';
+  showMonthDropdown();
+  loadMonthView();
   activeView = 'month';
 }
 
 function initButtons() {
   yearSelect.addEventListener('change', (e) => {
     loadYearView();
+  });
+
+  monthSelect.addEventListener('change', (e) => {
+    loadMonthView();
   });
 
   eventDateInput.addEventListener('change', (e) => {

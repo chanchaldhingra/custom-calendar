@@ -2,18 +2,6 @@ body {
   display: flex;
   margin-top: 50px;
   justify-content: center;
-  background-color: #FFFCFF;
-}
-
-button {
-  width: 75px;
-  cursor: pointer;
-  box-shadow: 0px 0px 2px gray;
-  border: none;
-  outline: none;
-  padding: 5px;
-  border-radius: 5px;
-  color: white;
 }
 
 #header {
@@ -24,19 +12,15 @@ button {
   display: flex;
   justify-content: flex-end;
   gap:20px;
+  margin-bottom: 5px;
 }
 
-#header button {
-  background-color: #92a1d1;
-}
 
 #container {
-  width: 770px;
+  width: 900px;
 }
 
-#calendar-year-view,
-#calendar-month-view {
-  width: 100%;
+#calendar-year-view {
   margin: auto;
   display: flex;
   flex-wrap: wrap;
@@ -44,23 +28,81 @@ button {
   gap: 20px;
 }
 
-#calendar-year-view div,
-#calendar-month-view div {
+#calendar-year-view > div {
   width: 200px;
   height: 200px;
   box-sizing: border-box;
-  border: 1px solid black;
+  border-left: none;
+  border-top: 2px solid rgba(5,5,5,0.6);
+  border-right: none;
+  border-bottom: none;
+  color: #000;
+  text-align: right;
+}
+
+.month-number{
+  padding-right: 5px;
+}
+
+.day {
+  height: 100px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-left: none;
+  border-top: 2px solid rgba(5,5,5,0.6);
+  border-right: none;
+  border-bottom: none;
+  background-color: white;
+  display: flex;
+  text-align: right;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.day:hover {
+  background-color: #eee;
+}
+
+.day + #currentDay {
+  background-color:#e6f4ff;
+  color: #0000ff
+}
+
+#weekdays {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  box-sizing: border-box;
+  text-align: right;
+}
+#weekdays div,
+#calendar-month-view > div {
+  padding: 10px;
+}
+
+#weekdays div {
+ padding-bottom: 5px;
+}
+
+#calendar-month-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  column-gap: 10px;
+  box-sizing: border-box;
 }
 
 .event {
   font-size: 10px;
-  padding: 3px;
-  background-color: #58bae4;
-  color: white;
+  padding: 5px;
+  margin-top: 5px;
+  background-color: #f4f4f4;
+  color: black;
   border-radius: 5px;
   max-height: 40px;
   overflow: hidden;
   box-sizing: border-box;
+  text-align: left;;
+
 }
 
 #newEventModal,
@@ -123,12 +165,6 @@ button {
   border: 1px solid #b0b0b0;
 }
 
-label {
-  font-size: 1rem;
-  margin-bottom: 8px;
-  color: #333;
-}
-
 select {
   padding: 10px 15px;
   font-size: 1rem;
@@ -146,26 +182,27 @@ select:focus {
 }
 
 .btn-active{
-  border: 2px solid red;
+  border: 1px solid #0000ff !important;
+  color: #0000ff !important;
 }
 
-.day {
-  width: 100px;
-  padding: 10px;
-  height: 100px;
-  cursor: pointer;
+.month-view-btn{
+  border: 1px solid #eee;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 15px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  margin-right: -7px;
   box-sizing: border-box;
-  background-color: white;
-  margin: 5px;
-  box-shadow: 0px 0px 3px #CBD4C2;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.day:hover {
-  background-color: #e8faed;
 }
 
-.day + #currentDay {
-  background-color:#e8f4fa;
+.year-view-btn{
+  box-sizing: border-box;
+  border: 1px solid #eee;
+  background-color: #fff;
+  color: #000;
+  padding: 10px 15px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
 }

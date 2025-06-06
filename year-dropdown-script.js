@@ -1,6 +1,6 @@
 const yearSelect = document.getElementById("yearSelect");
 
-function showDropdown()  {
+function showYearDropdown()  {
     const dt = new Date();
     let yr = Number(yearSelect.value) || dt.getFullYear();
     yearSelect.innerHTML = '';
@@ -15,8 +15,8 @@ function showDropdown()  {
     yearSelect.value = yr;
 }
 
-showDropdown();
+showYearDropdown();
 
-yearSelect.addEventListener('click', () => {showDropdown();});
+yearSelect.addEventListener('click', () => {showYearDropdown();});
 
-yearSelect.addEventListener('change', () => {showDropdown();});
+yearSelect.addEventListener('change', () => {showYearDropdown();});
